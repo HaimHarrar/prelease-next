@@ -1,9 +1,16 @@
-import { getFetcher } from "@/lib/utils"
-import {ProjectTypeSelect} from "@/db/drizzle/schemasType";
+import {getFetcher, postFetcher} from "@/lib/utils"
+import {ProjectTypeInsert, ProjectTypeSelect} from "@/lib/types.ts";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL
-const projectUrl = `${baseUrl}/api/project`
+const projectUrl = `${baseUrl}/api/projects`
+const url = (restUrl: TemplateStringsArray) => `${projectUrl}${restUrl}`
 
-export const getProjects = async () => {
-    return await getFetcher<ProjectTypeSelect[]>(`${projectUrl}/getProjects`);
+
+const getProjects = () => getFetcher<ProjectTypeSelect[]>(projectUrl);
+
+const createProject =  (data: ProjectTypeInsert) => postFetcher<ProjectTypeSelect[]>(url`/create`, data)
+
+export {
+    getProjects,
+    createProject
 }

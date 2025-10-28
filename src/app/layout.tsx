@@ -21,8 +21,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
                                        children,
+                                       modal,
                                    }: Readonly<{
     children: React.ReactNode;
+    modal: React.ReactNode;
 }>) {
     return (
         <html lang="en">
@@ -32,6 +34,7 @@ export default function RootLayout({
         >
         <div className="fixed top-0 left-0 w-full h-full bg-gray-300">
             <Navbar/>
+            {modal}
             {children}
         </div>
         </body>
