@@ -8,9 +8,12 @@ export const createProject = (projectInsertion: ProjectTypeInsert) => {
 }
 
 export const getProjects = () => {
-    return db.query.project.findMany({with: {cases: true}})
+    return db.query.project.findMany({with: {cases: true}, columns: {id: true, title: true, description: true}})
 }
 
 export const getProjectById = (id: string) => {
     return db.select().from(project).where(eq(project.id, Number(id)))
+}
+export const getProjectFileById = (id: string, fileName: "codeBase" | "functionalDetails") => {
+    return db.select({file: project[fileName]}).from(project).where(eq(project.id, Number(id)))
 }

@@ -3,7 +3,7 @@ import {getProjects} from "@/api/projectApi.ts";
 import {Button} from "@/components/ui/button.tsx";
 import Link from "next/link";
 import {projectRoutesWeb} from "@/lib/routes.ts";
-import {ProjectTypeSelect} from "@/lib/types.ts";
+import Project from "@/app/projects/Project.tsx";
 
 const page = async () => {
     const projects = await getProjects().then(res => res.data)
@@ -24,12 +24,3 @@ const page = async () => {
 }
 
 export default page
-
-const Project:React.FC<{project: ProjectTypeSelect}> = ({project}) => {
-    return (
-        <div className="border-2 p-2">
-            <div>{project.title}</div>
-            <div>{project.description}</div>
-        </div>
-    )
-}

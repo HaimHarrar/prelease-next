@@ -11,30 +11,52 @@ import {createProject} from "@/api/projectApi.ts";
 import {useRouter} from "next/navigation";
 import classNames from "classnames";
 
+const zipType = z
+    .any()
+    .refine((files) => files?.length === 1, "File is required")
+    .transform((fileList) => fileList[0])
+    .refine(
+        (file) =>
+            file.type === "application/zip" ||
+            file.type === "application/x-zip-compressed",
+        {message: "File must be a ZIP archive (.zip)"}
+    )
+    .refine((file) => file.size < 5 * 1024 * 1024, {
+        message: "File size must be less than 5MB",
+    }).optional()
+
 const formSchema = z.object({
-    title: z.string().min(5, {message: "title must be at least 5 characters"}),
-    description: z.string().min(5, {message: "description must be at least 5 characters"}),
+    title: z.string().min(2, {message: "title must be at least 5 characters"}),
+    description: z.string().min(2, {message: "description must be at least 5 characters"}),
+    codeBase: zipType,
+    functionalDetails: zipType,
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormObject = z.infer<typeof formSchema>;
 
-const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog=false}) => {
+const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog = false}) => {
     const router = useRouter();
-    const form = useForm<FormData>({
+    const form = useForm<FormObject>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: "",
             description: "",
+            codeBase: undefined,
+            functionalDetails: undefined
         },
     });
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data: FormObject) => {
         try {
-            const projectRes = await createProject(data)
-            console.log(projectRes.data)
+            const formData = new FormData();
+            formData.append("title", data.title);
+            formData.append("description", data.description);
+            formData.append("codeBase", data.codeBase as File);
+            formData.append("functionalDetails", data.functionalDetails as File);
+            const projectRes = await createProject(formData)
             router.push("/projects")
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
 
     };
@@ -43,7 +65,7 @@ const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog=false}) => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}
-                  className={classNames( "space-y-4 flex flex-col mx-auto mt-10 border-2 border-gray-300 p-4 rounded-md shadow-black shadow-sm", formSize)}>
+                  className={classNames("space-y-4 flex flex-col mx-auto mt-10 border-2 border-gray-300 p-4 rounded-md shadow-black shadow-sm", formSize)}>
                 <FormField
                     control={form.control}
                     name="title"
@@ -68,6 +90,50 @@ const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog=false}) => {
                                 <Textarea {...field} />
                             </FormControl>
                             <FormDescription>this is the description of the project</FormDescription>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="codeBase"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>upload Code Base</FormLabel>
+                            <FormControl>
+                                <Input
+                                    className="h-full"
+                                    placeholder="Upload Code Base"
+                                    type="file"
+                                    accept=".zip"
+                                    onChange={(e) => {
+                                        field.onChange(e.target?.files)
+                                    }
+                                    }
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="functionalDetails"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Upload Functional Details</FormLabel>
+                            <FormControl>
+                                <Input
+                                    className="h-full"
+                                    placeholder="Upload Functional Details"
+                                    type="file"
+                                    accept=".zip"
+                                    onChange={(e) => {
+                                        field.onChange(e.target?.files)
+                                    }
+                                    }
+                                />
+                            </FormControl>
                             <FormMessage/>
                         </FormItem>
                     )}

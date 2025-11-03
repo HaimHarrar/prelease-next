@@ -6,3 +6,5 @@ export type ProjectTypeSelect = typeof project.$inferSelect
 
 export type CaseTypeInsert = typeof kase.$inferInsert
 export type CaseTypeSelect = typeof kase.$inferSelect
+
+export type ProjectFilesType = "functionalDetails" | "codeBase"
