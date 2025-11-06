@@ -9,9 +9,9 @@ const page = async () => {
     const projects = await getProjects().then(res => res.data)
 
     return (
-        <div>
-            <h1>Projects</h1>
-            <div className='flex flex-row gap-2'>
+        <div className='flex flex-col gap-2 justify-center items-center'>
+            <h1 className="sticky top-[var(--navbar-height)] text-xl">Projects</h1>
+            <div className="flex flex-row flex-wrap gap-3 justify-center">
                 {
                     projects.map((project) => <Project key={project.id} project={project}/>)
                 }

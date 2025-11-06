@@ -8,7 +8,9 @@ export const project = pgTable("projects", {
     title: text().notNull(),
     description: text().notNull(),
     functionalDetails: bytea("functional_details"),
+    functionalDetailsFileName: text("functional_details_file_name"),
     codeBase: bytea("code_base"),
+    codeBaseFileName: text("code_base_file_name"),
 });
 
 export const projectRelations = relations(project, ({many}) => ({

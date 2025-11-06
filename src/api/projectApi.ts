@@ -1,6 +1,5 @@
 import {getFetcher, postFetcher} from "@/lib/utils"
-import {ProjectFilesType, ProjectTypeInsert, ProjectTypeSelect} from "@/lib/types.ts";
-import {AxiosResponse} from "axios";
+import {ProjectFilesType, ProjectTypeSelect} from "@/lib/types.ts";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL
 const projectUrl = `${baseUrl}/api/projects`
@@ -20,7 +19,7 @@ const getProjects = () => getFetcher<ProjectTypeSelect[]>(projectUrl);
 const getProjectById = (id: string) => getFetcher<ProjectTypeSelect[]>(url`/${id}`);
 
 const createProject =  (data: FormData) => postFetcher<ProjectTypeSelect[]>(projectUrl + `/create`, data, {headers: {'Content-Type': 'multipart/form-data'}})
-const getProjectFileById = (id: string, file: ProjectFilesType) => getFetcher<ArrayBuffer>(url`/${id}/download/${file}`, {responseType: 'arraybuffer'});
+const getProjectFileById = (id: string, field: ProjectFilesType) => getFetcher<ArrayBuffer>(url`/${id}/download/${field}`, {responseType: 'arraybuffer'});
 
 export {
     getProjects,

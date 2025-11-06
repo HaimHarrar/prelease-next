@@ -1,18 +1,26 @@
 import {createProject} from "@/db/interfaces/projectInterface";
 import {NextRequest, NextResponse} from "next/server";
-import {ProjectTypeInsert} from "@/lib/types.ts";
+import {projectFields, ProjectTypeInsert} from "@/lib/types.ts";
 
 export async function POST(req: NextRequest) {
-    const r = await req.formData();
-    const codeBaseBuffer = r.get("codeBase") ? Buffer.from(await (r.get("codeBase") as File)?.arrayBuffer()) : null
-    const functionalDetailsBuffer = r.get("functionalDetails") ? Buffer.from(await (r.get("functionalDetails") as File)?.arrayBuffer()) : null
+    const formData = await req.formData();
     const reqJson: ProjectTypeInsert = {
-        title: r.get("title") as string,
-        description: r.get("description") as string,
-        codeBase: codeBaseBuffer,
-        functionalDetails: functionalDetailsBuffer
+        title: formData.get(projectFields.title) as string,
+        description: formData.get(projectFields.description) as string,
     } as ProjectTypeInsert;
 
-    await createProject(reqJson);
-    return new NextResponse(JSON.stringify(reqJson), {status: 200});
+    if(formData.get(projectFields.codeBase)) {
+        const codeBaseFile = formData.get(projectFields.codeBase) as File;
+        reqJson.codeBase = Buffer.from(await codeBaseFile.arrayBuffer())
+        reqJson.codeBaseFileName = codeBaseFile.name as string
+    }
+
+    if(formData.get(projectFields.functionalDetails)) {
+        const functionalDetailsFile = formData.get(projectFields.functionalDetails) as File;
+        reqJson.functionalDetails = Buffer.from(await functionalDetailsFile.arrayBuffer())
+        reqJson.functionalDetailsFileName = functionalDetailsFile.name as string
+    }
+
+    const res  = await createProject(reqJson);
+    return new NextResponse(JSON.stringify(res), {status: 200});
 }

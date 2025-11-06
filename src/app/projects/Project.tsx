@@ -1,26 +1,37 @@
-"use client"
-import {ProjectTypeSelect} from "@/lib/types.ts";
-import {getProjectFileById} from "@/api/projectApi.ts";
+import {Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import {projectFields, ProjectTypeSelect} from "@/lib/types.ts";
+import {Button} from "@/components/ui/button.tsx";
+import ProjectFileBox from "@/app/projects/ProjectFileBox.tsx";
 
 const Project: React.FC<{ project: ProjectTypeSelect }> = ({project}) => {
 
-    const handleDownload = async () => {
-        const res = await getProjectFileById(project.id.toString(), "codeBase")
-        const data = res.data
-        const blob = new Blob([data], {type: "application/octet-stream"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "file.zip";
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
     return (
-        <div onClick={handleDownload} className="border-2 p-2">
-            <div>{project.title}</div>
-            <div>{project.description}</div>
-        </div>
+        <Card className=" w-[calc(33%-1rem)] h-1/3">
+            <CardHeader>
+                <CardTitle>{project.title}</CardTitle>
+                <CardDescription>
+                    {project.description}
+                </CardDescription>
+                <CardAction>
+                    <Button variant="link">go to cases</Button>
+                </CardAction>
+            </CardHeader>
+            <CardContent className="text-center py-4 text-lg font-medium flex flex-row gap-10 justify-center">
+                {
+                    project.codeBaseFileName &&
+                    <ProjectFileBox id={project.id.toString()} fieldName={projectFields.codeBase}
+                                    fileName={project.codeBaseFileName!}/>
+                }
+                {
+                    project.functionalDetailsFileName &&
+                    <ProjectFileBox id={project.id.toString()} fieldName={projectFields.functionalDetails}
+                                    fileName={project.functionalDetailsFileName!}/>
+                }
+            </CardContent>
+            <CardFooter>
+                <div>hello</div>
+            </CardFooter>
+        </Card>
     )
 }
 

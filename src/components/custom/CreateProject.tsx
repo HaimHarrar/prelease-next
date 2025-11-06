@@ -10,6 +10,7 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {createProject} from "@/api/projectApi.ts";
 import {useRouter} from "next/navigation";
 import classNames from "classnames";
+import {projectFields} from "@/lib/types.ts";
 
 const zipType = z
     .any()
@@ -49,12 +50,19 @@ const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog = false}) => 
     const onSubmit = async (data: FormObject) => {
         try {
             const formData = new FormData();
-            formData.append("title", data.title);
-            formData.append("description", data.description);
-            formData.append("codeBase", data.codeBase as File);
-            formData.append("functionalDetails", data.functionalDetails as File);
-            const projectRes = await createProject(formData)
-            router.push("/projects")
+            formData.append(projectFields.title, data.title);
+            formData.append(projectFields.description, data.description);
+            if(data.codeBase){
+                formData.append(projectFields.codeBase, data.codeBase as File);
+            }
+            if(data.functionalDetails) {
+                formData.append(projectFields.functionalDetails, data.functionalDetails as File);
+            }
+            const res = await createProject(formData)
+            if(res.status === 200){
+                router.push("/projects")
+                router.refresh()
+            }
         } catch (e) {
             console.error(e)
         }
