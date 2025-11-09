@@ -59,6 +59,7 @@ const CreateProject: React.FC<{ isDialog?: boolean }> = ({isDialog = false}) => 
                 formData.append(projectFields.functionalDetails, data.functionalDetails as File);
             }
             const res = await createProject(formData)
+            console.log(res)
             if(res.status === 200){
                 router.push("/projects")
                 router.refresh()

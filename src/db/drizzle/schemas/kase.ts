@@ -1,6 +1,7 @@
 import { pgTable, serial, text, integer } from "drizzle-orm/pg-core";
 import {relations} from "drizzle-orm";
 import {project} from "@/db/drizzle/schemas/project";
+import {scenario} from "@/db/drizzle/schemas/scenario.ts";
 
 export const kase = pgTable("cases", {
     id: serial().primaryKey().notNull(),
@@ -11,9 +12,10 @@ export const kase = pgTable("cases", {
     }),
 })
 
-export const caseRelations = relations(kase, ({one}) => ({
+export const caseRelations = relations(kase, ({one, many}) => ({
     project: one(project, {
         fields: [kase.projectId],
         references: [project.id],
-    })
+    }),
+    scenarios: many(scenario),
 }))

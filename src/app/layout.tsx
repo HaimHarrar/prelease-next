@@ -30,13 +30,12 @@ export default function RootLayout({
         <html lang="en">
         <body
             style={{margin: 0}}
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
         >
-        <div className="bg-gray-300">
             <Navbar/>
+
             {modal}
             {children}
-        </div>
         </body>
         </html>
     );

@@ -9,8 +9,8 @@ import {z} from "zod";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {useRouter} from "next/navigation";
 import classNames from "classnames";
-import {createCase} from "@/api/caseApi.ts";
-import {caseRoutesWeb} from "@/lib/routes.ts";
+import {createScenario} from "@/api/scenarioApi.ts";
+import {scenarioRoutesWeb} from "@/lib/routes.ts";
 
 const formSchema = z.object({
     title: z.string().min(2, {message: "title must be at least 5 characters"}),
@@ -19,7 +19,7 @@ const formSchema = z.object({
 
 type FormObject = z.infer<typeof formSchema>;
 
-const CreateCase: React.FC<{ isDialog?: boolean, projectId: string }> = ({isDialog = false, projectId}) => {
+const CreateScenario: React.FC<{ isDialog?: boolean, caseId: string }> = ({isDialog = false, caseId}) => {
     const router = useRouter();
     const form = useForm<FormObject>({
         resolver: zodResolver(formSchema),
@@ -31,9 +31,9 @@ const CreateCase: React.FC<{ isDialog?: boolean, projectId: string }> = ({isDial
 
     const onSubmit = async (data: FormObject) => {
         try {
-            const res = await createCase({...data, projectId: Number(projectId)});
+            const res = await createScenario({...data, caseId: Number(caseId)});
             if(res.status === 200){
-                router.push(caseRoutesWeb.cases(projectId))
+                router.push(scenarioRoutesWeb.scenarios(caseId))
                 router.refresh()
             }
         } catch (e) {
@@ -56,7 +56,7 @@ const CreateCase: React.FC<{ isDialog?: boolean, projectId: string }> = ({isDial
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
-                            <FormDescription>this is the title of the case</FormDescription>
+                            <FormDescription>this is the title of the scenario</FormDescription>
                             <FormMessage/>
                         </FormItem>
                     )}
@@ -70,7 +70,7 @@ const CreateCase: React.FC<{ isDialog?: boolean, projectId: string }> = ({isDial
                             <FormControl>
                                 <Textarea {...field} />
                             </FormControl>
-                            <FormDescription>this is the description of the case</FormDescription>
+                            <FormDescription>this is the description of the scenario</FormDescription>
                             <FormMessage/>
                         </FormItem>
                     )}
@@ -81,4 +81,4 @@ const CreateCase: React.FC<{ isDialog?: boolean, projectId: string }> = ({isDial
     );
 };
 
-export default CreateCase;
+export default CreateScenario;
